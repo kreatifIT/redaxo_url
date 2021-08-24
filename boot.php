@@ -79,10 +79,6 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
         \rex_extension::register('OUTPUT_FILTER', ['\Url\Generator', 'replaceLinks']);
     }
 
-    rex_extension::register('URL_REWRITE', function (\rex_extension_point $ep) {
-        return UrlManager::getRewriteUrl($ep);
-    }, rex_extension::EARLY);
-
     // kreatif: not needed for Kreatif Seo
 //    if (null !== Url::getRewriter() && Url::getRewriter()->getSitemapExtensionPoint()) {
 //        rex_extension::register(Url::getRewriter()->getSitemapExtensionPoint(), function (rex_extension_point $ep) {
@@ -95,6 +91,10 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
 //            $ep->setSubject($sitemap);
 //        }, rex_extension::EARLY);
 //    }
+}, rex_extension::EARLY);
+
+rex_extension::register('URL_REWRITE', function (\rex_extension_point $ep) {
+    return UrlManager::getRewriteUrl($ep);
 }, rex_extension::EARLY);
 
 rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epPackagesIncluded) {
