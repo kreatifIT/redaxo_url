@@ -92,9 +92,10 @@ class Seo
 
     public function setImages(\rex_extension_point $Ep)
     {
-        $images = $Ep->getSubject();
+        $images    = $Ep->getSubject();
+        $articleId = $Ep->getParam('article')->getId();
 
-        if ($images === '' && $this->isUrl()) {
+        if ($images === '' && $this->isUrl() && $articleId == \rex_article::getCurrentId()) {
             $images = $this->manager->getSeoImage();
         }
         return $images;
