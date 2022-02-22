@@ -100,7 +100,7 @@ class UrlManagerSql
     public function setUrl($url)
     {
         // kreatif: host generalization added
-        if (\rex::isDebugMode()) {
+        if (\Kreatif\Settings::isTestServer()) {
             if (\rex_addon::get('yrewrite')->isAvailable() && $domain = \rex_yrewrite::getCurrentDomain()) {
                 $_url = parse_url($domain->getUrl());
             } else {
@@ -245,7 +245,7 @@ class UrlManagerSql
         $query->alias('m');
 
         // kreatif: host generalization added
-        if (\rex::isDebugMode() && $domain = \rex_yrewrite::getCurrentDomain()) {
+        if (\Kreatif\Settings::isTestServer() && $domain = \rex_yrewrite::getCurrentDomain()) {
             $replace = $domain->getHost() . $domain->getPath();
             $query->selectRaw("REPLACE(url, '//domain/', '//{$replace}') AS url");
         }
@@ -282,7 +282,7 @@ class UrlManagerSql
 
         $sql = self::factory();
         // kreatif: host generalization added
-        if (\rex::isDebugMode() && $domain = \rex_yrewrite::getCurrentDomain()) {
+        if (\Kreatif\Settings::isTestServer() && $domain = \rex_yrewrite::getCurrentDomain() ) {
             $replace = $domain->getHost() . $domain->getPath();
             return $sql->sql->getArray('SELECT *, REPLACE(url, "//domain/", "//' . $replace . '") AS url FROM ' . \rex::getTable(self::TABLE_NAME) . ' WHERE `data_id` = ? AND `article_id` = ? AND is_user_path = ? AND is_structure = ? AND (' . $where . ')', $params);
         } else {
@@ -303,7 +303,7 @@ class UrlManagerSql
     {
         $sql = self::factory();
         // kreatif: host generalization added
-        if (\rex::isDebugMode() && $domain = \rex_yrewrite::getCurrentDomain()) {
+        if (\Kreatif\Settings::isTestServer() && $domain = \rex_yrewrite::getCurrentDomain()) {
             $replace = $domain->getHost() . $domain->getPath();
             return $sql->sql->getArray('SELECT *, REPLACE(url, "//domain/", "//' . $replace . '") AS url FROM ' . \rex::getTable(self::TABLE_NAME) . ' WHERE `profile_id` = ? AND `data_id` = ? AND `clang_id` = ? AND is_user_path = ? AND is_structure = ?', [$profile->getId(), $datasetId, $clangId, 0, 0]);
         } else {
@@ -324,7 +324,7 @@ class UrlManagerSql
     {
         $sql = self::factory();
         // kreatif: host generalization added
-        if (\rex::isDebugMode() && $domain = \rex_yrewrite::getCurrentDomain()) {
+        if (\Kreatif\Settings::isTestServer() && $domain = \rex_yrewrite::getCurrentDomain()) {
             $replace = $domain->getHost() . $domain->getPath();
             return $sql->sql->getArray('SELECT *, REPLACE(url, "//domain/", "//' . $replace . '") AS url FROM ' . \rex::getTable(self::TABLE_NAME) . ' WHERE `profile_id` = ? AND `data_id` = ? AND `clang_id` = ?', [$profile->getId(), $datasetId, $clangId]);
         } else {
@@ -348,7 +348,7 @@ class UrlManagerSql
 
         $sql = self::factory();
         // kreatif: host generalization added
-        if (\rex::isDebugMode() && $domain = \rex_yrewrite::getCurrentDomain()) {
+        if (\Kreatif\Settings::isTestServer() && $domain = \rex_yrewrite::getCurrentDomain()) {
             if (\rex_addon::get('yrewrite')->isAvailable() && $domain = \rex_yrewrite::getCurrentDomain()) {
                 $_url = parse_url($domain->getUrl());
             } else {
