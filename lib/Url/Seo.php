@@ -24,9 +24,9 @@ class Seo
 
     public function __construct()
     {
-        if (!\rex::isBackend()) {
-            $this->manager     = Url::resolveCurrent();
-            $this->rewriter    = Url::getRewriter();
+        if (\rex::isFrontend()) {
+            $this->manager = Url::resolveCurrent();
+            $this->rewriter = Url::getRewriter();
             $this->rewriterSeo = $this->rewriter->getSeoInstance();
 
             \rex_extension::register('YREWRITE_TITLE', [$this, 'setTitle']);
@@ -35,146 +35,6 @@ class Seo
             \rex_extension::register('YREWRITE_CANONICAL_URL', [$this, 'setCanonicalUrl']);
             \rex_extension::register('YREWRITE_IMAGES', [$this, 'setImages']);
         }
-    }
-
-    public function setTitle(\rex_extension_point $Ep)
-    {
-        $title = $Ep->getSubject();
-
-        if ($this->isUrl() && $this->manager->getSeoTitle()) {
-            $title = $this->manager->getSeoTitle() . ' / ' . $title;
-        }
-        return $title;
-    }
-
-    public function setDescription(\rex_extension_point $Ep)
-    {
-        $description = $Ep->getSubject();
-
-        if ($this->isUrl() && $this->manager->getSeoDescription()) {
-            $description = $this->manager->getSeoDescription();
-        }
-        return $description;
-    }
-
-    public function setHrefLangs(\rex_extension_point $Ep)
-    {
-        $href_langs = $Ep->getSubject();
-
-        if ($this->isUrl()) {
-            $items = $this->manager->getHreflang(\rex_clang::getAllIds(true));
-
-            if ($items) {
-                $href_langs = [];
-
-                foreach ($items as $item) {
-                    $clang = \rex_clang::get($item->getClangId());
-                    $url   = $item->getUrl();
-                    $url->withSolvedScheme();
-                    $href_langs[$clang->getCode()] = (string)$url->toString();
-                }
-            }
-        }
-        return $href_langs;
-    }
-
-    public function setCanonicalUrl(\rex_extension_point $Ep)
-    {
-        $canonical = $Ep->getSubject();
-
-        if ($this->isUrl()) {
-            $url = $this->manager->getUrl();
-            $url->withSolvedScheme();
-            $canonical = (string)$url->toString();
-        }
-        return $canonical;
-    }
-
-    public function setImages(\rex_extension_point $Ep)
-    {
-        $images    = $Ep->getSubject();
-        $articleId = $Ep->getParam('article')->getId();
-
-        if ($images === '' && $this->isUrl() && $articleId == \rex_article::getCurrentId()) {
-            $images = $this->manager->getSeoImage();
-        }
-        return $images;
-    }
-
-    public static function setSitemap(\rex_extension_point $Ep)
-    {
-        $urls       = (array)$Ep->getSubject();
-        $free_slots = $Ep->getParam('free_slots', 50000);
-        $profiles   = Profile::getAll();
-
-        if (!$profiles || $free_slots <= 0) {
-            return $urls;
-        }
-
-
-        foreach ($profiles as $profile) {
-            if (!$profile->inSitemap()) {
-                continue;
-            }
-
-            if ($profile->getArticleClangId()) {
-                $clang = \rex_clang::get($profile->getArticleClangId());
-                if (!$clang->isOnline()) {
-                    continue;
-                }
-                $article = \rex_article::get($profile->getArticleId(), $clang->getId());
-                if (!$article->isOnline() || !$article->isPermitted()) {
-                    continue;
-                }
-            }
-
-            $profileUrls = $profile->getUrls();
-
-            if (!$profileUrls) {
-                continue;
-            }
-
-            foreach ($profileUrls as $profileUrl) {
-                if (!$profileUrl->publishedInSitemap()) {
-                    continue;
-                }
-
-                $urlObject = $profileUrl->getUrl();
-                $urlObject->withSolvedScheme();
-
-                $url = [
-                    'loc'        => (string)$urlObject->getSchemeAndHttpHost() . urldecode($urlObject->getPath()),
-                    'lastmod'    => $profileUrl->getLastmod(),
-                    'changefreq' => $profile->getSitemapFrequency(),
-                    'priority'   => $profile->getSitemapPriority(),
-                    'image'      => [],
-                ];
-
-                if ($profileUrl->getSeoImage()) {
-                    $images = array_unique(array_filter(explode(',', $profileUrl->getSeoImage())));
-
-
-                    foreach ($images as $media_name) {
-                        $media = \rex_media::get($media_name);
-
-                        if ($media && $media->isImage()) {
-                            $imgUrl         = [
-                                'loc'   => $urlObject->getSchemeAndHttpHost() . $media->getUrl(),
-                                'title' => rex_escape(strip_tags($media->getTitle())),
-                            ];
-                            $url['image'][] = $imgUrl;
-                        }
-                    }
-                }
-                $urls[] = $url;
-                $free_slots--;
-
-                if ($free_slots <= 0) {
-                    break 2;
-                }
-            }
-        }
-        return $urls;
     }
 
     public function getTags()
@@ -207,7 +67,7 @@ class Seo
 
         $fullUrl = $this->getFullUrl();
         $tags['canonical'] = '<link rel="canonical" href="'.$fullUrl.'" />';
-        $tags['og:url'] = '<meta property="og:url" href="'.$fullUrl.'" />';
+        $tags['og:url'] = '<meta property="og:url" content="'.$fullUrl.'" />';
         $tags['twitter:url'] = '<meta name="twitter:url" content="'.$fullUrl.'" />';
 
 
@@ -267,9 +127,16 @@ class Seo
             return [];
         }
 
+        $rewriter = Url::getRewriter();
+
         $sitemap = [];
         foreach ($profiles as $profile) {
             if (!$profile->inSitemap()) {
+                continue;
+            }
+
+            // Befindet sich der Artikel in der aktuellen Domain?
+            if ($rewriter->getDomainByArticleId($profile->getArticleId()) !== $rewriter->getCurrentDomain()) {
                 continue;
             }
 

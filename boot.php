@@ -16,6 +16,8 @@ use Url\Seo;
 use Url\Url;
 use Url\UrlManager;
 
+$addon = rex_addon::get('url');
+
 Generator::boot();
 if (null !== Url::getRewriter()) {
     Url::getRewriter()->articleIdNotFound();
@@ -51,11 +53,11 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
             $subject = $ep->getSubject();
 
             foreach ($profileArticleIds as $id) {
-                $regexp = '@<a href="index\.php\?page=structure.*?category-id='.$id.'&.*?rex-api-call=category_delete.*?>(.*?)<\/a>@';
+                $regexp = '@<a.*?href="index\.php\?page=structure[^>]*category-id='.$id.'&[^>]*rex-api-call=category_delete[^>]*>([^&]*)<\/a>@';
                 if (preg_match($regexp, $subject, $matches)) {
                     $subject = str_replace($matches[0], '<span class="text-muted" title="'.rex_i18n::msg('url_generator_structure_disallow_to_delete_category').'">'.$matches[1].'</span>', $subject);
                 }
-                $regexp = '@<a href="index\.php\?page=structure[^>]*article_id='.$id.'&[^>]*rex-api-call=article_delete[^>]*>([^&]*)<\/a>@';
+                $regexp = '@<a[^>]*href="index\.php\?page=structure[^>]*article_id='.$id.'&[^>]*rex-api-call=article_delete[^>]*>([^&]*)<\/a>@';
                 if (preg_match($regexp, $subject, $matches)) {
                     $subject = str_replace($matches[0], '<span class="text-muted" title="'.rex_i18n::msg('url_generator_structure_disallow_to_delete_article').'">'.$matches[1].'</span>', $subject);
                 }
@@ -79,25 +81,14 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
         \rex_extension::register('OUTPUT_FILTER', ['\Url\Generator', 'replaceLinks']);
     }
 
-    // kreatif: not needed for Kreatif Seo
-//    if (null !== Url::getRewriter() && Url::getRewriter()->getSitemapExtensionPoint()) {
-//        rex_extension::register(Url::getRewriter()->getSitemapExtensionPoint(), function (rex_extension_point $ep) {
-//            $sitemap = $ep->getSubject();
-//            if (is_array($sitemap)) {
-//                $sitemap = array_merge($sitemap, Seo::getSitemap());
-//            } else {
-//                $sitemap = Seo::getSitemap();
-//            }
-//            $ep->setSubject($sitemap);
-//        }, rex_extension::EARLY);
-//    }
-}, rex_extension::EARLY);
-
-rex_extension::register('URL_REWRITE', function (\rex_extension_point $ep) {
-    return UrlManager::getRewriteUrl($ep);
 }, rex_extension::EARLY);
 
 rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epPackagesIncluded) {
     // kreatif: wird für SEO-Title gebraucht
     new Seo();
 });
+
+
+if (rex::isBackend() && rex::getUser()) {
+    rex_view::addCssFile($addon->getAssetsUrl('styles.css'));
+}

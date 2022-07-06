@@ -11,9 +11,6 @@
 
 namespace Url;
 
-use Kreatif\Project\Insertion;
-
-
 class Profile
 {
     const TABLE_NAME = 'url_generator_profile';
@@ -178,8 +175,8 @@ class Profile
 
     public function getRestrictions()
     {
-        return \rex_extension::registerPoint(new \rex_extension_point('URL_GET_RESTRICTIONS', $this->table['restrictions'], [
-            'profile' => $this
+        return \rex_extension::registerPoint(new \rex_extension_point('URL_PROFILE_RESTRICTION', $this->table['restrictions'], [
+             'profile' => $this
         ]));
     }
 
@@ -245,12 +242,17 @@ class Profile
 
     public function getDatabaseId()
     {
-        return $this->table['dbid'];
+        return (int) $this->table['dbid'];
     }
 
     public function getTableName()
     {
         return $this->table['name'];
+    }
+
+    public function addColumnName($column)
+    {
+        return $this->table['column_names'][$column] = $column;
     }
 
     public function getColumnName($column)
@@ -441,7 +443,7 @@ class Profile
                 ->setValue('ep_pre_save_called', 1);
 
             if ($sql->update()) {
-                self::reset();
+                Cache::deleteProfiles();
             }
         }
     }
@@ -634,10 +636,9 @@ class Profile
         if ($this->hasRestrictions()) {
             $where = [];
             foreach ($this->getRestrictions() as $index => $values) {
-                $column = $values['column'] ? sprintf('%s.%s', self::ALIAS, $values['column']) : $this->getColumnNameWithAlias('restriction_'.$index);
                 $restriction = new ProfileRestriction(
                     $index,
-                    $column,
+                    $this->getColumnNameWithAlias($values['column'] ?? 'restriction_'.$index),
                     $values['comparison_operator'],
                     $values['value'],
                     ($values['logical_operator'] ?? '')
