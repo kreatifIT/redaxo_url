@@ -77,8 +77,8 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
         }
     }
     else {
-        \rex_extension::register('YREWRITE_DOMAIN_SITEMAP_URLS', ['\Url\Seo', 'setSitemap']);
-        \rex_extension::register('OUTPUT_FILTER', ['\Url\Generator', 'replaceLinks']);
+        \rex_extension::register('YREWRITE_DOMAIN_SITEMAP_URLS', [Seo::class, 'setSitemap']);
+        \rex_extension::register('OUTPUT_FILTER', [Generator::class, 'replaceLinks']);
     }
 
 }, rex_extension::EARLY);
