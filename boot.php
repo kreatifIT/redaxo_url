@@ -77,7 +77,6 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
         }
     }
     else {
-        \rex_extension::register('YREWRITE_DOMAIN_SITEMAP_URLS', [Seo::class, 'setSitemap']);
         \rex_extension::register('OUTPUT_FILTER', [Generator::class, 'replaceLinks']);
     }
 
@@ -86,11 +85,6 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
 rex_extension::register('URL_REWRITE', function (\rex_extension_point $ep) {
     return UrlManager::getRewriteUrl($ep);
 }, rex_extension::EARLY);
-
-rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epPackagesIncluded) {
-    // kreatif: wird für SEO-Title gebraucht
-    new Seo();
-});
 
 if (rex::isBackend() && rex::getUser()) {
     rex_view::addCssFile($addon->getAssetsUrl('styles.css'));

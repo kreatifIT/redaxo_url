@@ -252,35 +252,6 @@ class UrlManager
         return $instances;
     }
 
-    public function publishedInSitemap()
-    {
-        if (!$this->inSitemap()) {
-            return false;
-        }
-
-        $clangId = $this->values['clang_id'];
-        $clang   = \rex_clang::get($clangId);
-
-        if (!$clang->isOnline()) {
-            return false;
-        }
-
-        $article = \rex_article::get($this->getArticleId(), $clangId);
-        if (!$article->isOnline()) {
-            return false;
-        }
-
-        $articlePath = $article->getPathAsArray();
-        foreach ($articlePath as $id) {
-            $category = \rex_category::get($id);
-            if (!$category->isOnline()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     /**
      * @param Url $url
      *
