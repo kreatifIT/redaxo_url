@@ -143,11 +143,6 @@ class UrlManagerSql
         $this->where['lastmod'] = date(DATE_W3C, $value);
     }
 
-    public function getWhere($key)
-    {
-        return $this->where[$key];
-    }
-
     /**
      * @throws \rex_sql_exception
      *
