@@ -44,7 +44,7 @@ class ExtensionPointManager
     public function __construct($extensionPoint)
     {
         $this->extensionPoint = $extensionPoint;
-        // $this->normalize();
+        $this->normalize();
         return $this;
     }
 
@@ -167,7 +167,6 @@ class ExtensionPointManager
             case 'YFORM_DATA_ADDED':
             case 'YFORM_DATA_DELETED':
             case 'YFORM_DATA_UPDATED':
-            case 'YFORM_DATA_STATUS_CHANGED':
                 // dump($this->extensionPoint->getParams());
                 /* @var $object \rex_yform_manager_dataset */
                 $object = $this->extensionPoint->getParam('data');
