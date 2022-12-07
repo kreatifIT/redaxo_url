@@ -202,8 +202,7 @@ class UrlManager
      */
     public function inSitemap()
     {
-        // kreatif: changed "===" to "=="
-        return $this->values['sitemap'] == 1 ? true : false;
+        return $this->values['sitemap'] === 1 ? true : false;
     }
 
     /**

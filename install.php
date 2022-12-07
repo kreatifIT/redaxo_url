@@ -37,7 +37,7 @@
     ->ensureColumn(new \rex_sql_column('profile_id', 'INT(11)'))
     ->ensureColumn(new \rex_sql_column('article_id', 'INT(11)'))
     ->ensureColumn(new \rex_sql_column('clang_id', 'INT(11)'))
-    ->ensureColumn(new \rex_sql_column('data_id', 'bigint(20) unsigned'))
+    ->ensureColumn(new \rex_sql_column('data_id', 'INT(11)'))
     ->ensureColumn(new \rex_sql_column('is_user_path', 'TINYINT(1)', false, '0'))
     ->ensureColumn(new \rex_sql_column('is_structure', 'TINYINT(1)', false, '0'))
     ->ensureColumn(new \rex_sql_column('url', 'TEXT'))

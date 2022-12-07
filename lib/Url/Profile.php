@@ -274,7 +274,6 @@ class Profile
         $items = $this->getDatasets();
         foreach ($items as $item) {
             $this->createAndSaveUrls($item);
-            $item->clearInstancePool([$item->getTableName(), $item->getId()]);
         }
     }
 
@@ -283,7 +282,6 @@ class Profile
         $items = $this->getDataset('id', $datasetId);
         foreach ($items as $item) {
             $this->createAndSaveUrls($item);
-            $item->clearInstancePool([$item->getTableName(), $item->getId()]);
         }
     }
 

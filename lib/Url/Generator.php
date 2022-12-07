@@ -71,21 +71,4 @@ class Generator
             }
         }
     }
-
-    public static function replaceLinks(\rex_extension_point $ep) {
-        return preg_replace_callback(
-            '@table://(\w+)-(\d+)(?:-(\d+))?/?@i',
-            function ($matches) {
-                $sql = \rex_sql::factory();
-                $sql->setTable(\rex::getTable('url_generator_profile'));
-                $sql->setWhere('table_name = :table AND(clang_id = :langId OR clang_id = 0)', [
-                    'table'  => '1'. Database::DATABASE_TABLE_SEPARATOR . $matches[1],
-                    'langId' => $matches[3],
-                ]);
-                $sql->select('article_id, clang_id, namespace');
-                return rex_getUrl($sql->getValue('article_id'), $sql->getValue('clang_id'), [$sql->getValue('namespace') => $matches[2]]);
-            },
-            $ep->getSubject()
-        );
-    }
 }

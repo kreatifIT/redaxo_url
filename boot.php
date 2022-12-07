@@ -24,27 +24,25 @@ if (null !== Url::getRewriter()) {
 }
 
 rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epPackagesIncluded) {
-    // if anything changes -> refresh PathFile
-    $extensionPoints = [
-        'ART_ADDED', 'ART_DELETED', 'ART_MOVED', 'ART_STATUS', 'ART_UPDATED',
-        'CAT_ADDED', 'CAT_DELETED', 'CAT_MOVED', 'CAT_STATUS', 'CAT_UPDATED',
-        'CLANG_ADDED', 'CLANG_DELETED','CLANG_UPDATED',
-        //'CACHE_DELETED',
-        'REX_FORM_SAVED',
-        'YFORM_SAVED',
-        'YFORM_DATA_ADDED', 'YFORM_DATA_DELETED', 'YFORM_DATA_UPDATED', 'YFORM_DATA_STATUS_CHANGED',
-    ];
-
-    foreach ($extensionPoints as $extensionPoint) {
-        rex_extension::register($extensionPoint, function (\rex_extension_point $ep) {
-            $manager = new ExtensionPointManager($ep);
-            $generator = new Generator($manager);
-            $generator->execute();
-        }, rex_extension::LATE);
-    }
-
-    // kreatif: if moved down to this position to exectue extension point also in frontend
     if (rex::isBackend() && rex::getUser()) {
+        $extensionPoints = [
+            'ART_ADDED', 'ART_DELETED', 'ART_MOVED', 'ART_STATUS', 'ART_UPDATED',
+            'CAT_ADDED', 'CAT_DELETED', 'CAT_MOVED', 'CAT_STATUS', 'CAT_UPDATED',
+            'CLANG_ADDED', 'CLANG_DELETED','CLANG_UPDATED',
+            'CACHE_DELETED',
+            'REX_FORM_SAVED',
+            'YFORM_SAVED',
+            'YFORM_DATA_ADDED', 'YFORM_DATA_DELETED', 'YFORM_DATA_UPDATED',
+        ];
+
+        foreach ($extensionPoints as $extensionPoint) {
+            rex_extension::register($extensionPoint, function (\rex_extension_point $ep) {
+                $manager = new ExtensionPointManager($ep);
+                $generator = new Generator($manager);
+                $generator->execute();
+            }, rex_extension::LATE);
+        }
+
         $profileArticleIds = Profile::getAllArticleIds();
 
         // Profilartikel nicht löschen
@@ -76,15 +74,24 @@ rex_extension::register('PACKAGES_INCLUDED', function (\rex_extension_point $epP
             });
         }
     }
-    else {
-        \rex_extension::register('OUTPUT_FILTER', [Generator::class, 'replaceLinks']);
+
+    rex_extension::register('URL_REWRITE', function (\rex_extension_point $ep) {
+        return UrlManager::getRewriteUrl($ep);
+    }, rex_extension::EARLY);
+
+    if (null !== Url::getRewriter() && Url::getRewriter()->getSitemapExtensionPoint()) {
+        rex_extension::register(Url::getRewriter()->getSitemapExtensionPoint(), function (rex_extension_point $ep) {
+            $sitemap = $ep->getSubject();
+            if (is_array($sitemap)) {
+                $sitemap = array_merge($sitemap, Seo::getSitemap());
+            } else {
+                $sitemap = Seo::getSitemap();
+            }
+            $ep->setSubject($sitemap);
+        }, rex_extension::EARLY);
     }
-
 }, rex_extension::EARLY);
 
-rex_extension::register('URL_REWRITE', function (\rex_extension_point $ep) {
-    return UrlManager::getRewriteUrl($ep);
-}, rex_extension::EARLY);
 
 if (rex::isBackend() && rex::getUser()) {
     rex_view::addCssFile($addon->getAssetsUrl('styles.css'));

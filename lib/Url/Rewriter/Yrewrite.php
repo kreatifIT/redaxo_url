@@ -22,7 +22,7 @@ class Yrewrite extends Rewriter
     {
         \rex_extension::register('YREWRITE_PREPARE', function (\rex_extension_point $ep) {
             return UrlManager::getArticleParams();
-        });
+        }, \rex_extension::EARLY);
     }
 
     public function getDomainByArticleId($articleId)

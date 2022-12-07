@@ -44,7 +44,7 @@ class ExtensionPointManager
     public function __construct($extensionPoint)
     {
         $this->extensionPoint = $extensionPoint;
-        $this->normalize();
+        // $this->normalize();
         return $this;
     }
 
@@ -145,19 +145,12 @@ class ExtensionPointManager
                         break;
                     }
 
-                    // kreatif: ohne try wirft es Fehler beim erstellen von Metainfos
-                    try {
-                        $primaryId = $object->isEditMode() ? $object->getSql()->getValue($primaryKey) : $object->getSql()->getLastId();
-                        $this->setMode(self::MODE_UPDATE_URL_DATASET);
-                        $this->setDatasetEditMode($object->isEditMode());
-                        $this->setDatasetPrimaryId($primaryId);
-                        $this->setDatasetPrimaryColumnName($primaryKey);
-                        $this->setDatasetTableName($tableName);
-                    } catch (\rex_sql_exception $ex) {
-                        if ($ex->getMessage() != 'Unable to fetch row.') {
-                            throw new \rex_sql_exception($ex->getMessage(), $ex->getPrevious());
-                        }
-                    }
+                    $primaryId = $object->isEditMode() ? $object->getSql()->getValue($primaryKey) : $object->getSql()->getLastId();
+                    $this->setMode(self::MODE_UPDATE_URL_DATASET);
+                    $this->setDatasetEditMode($object->isEditMode());
+                    $this->setDatasetPrimaryId($primaryId);
+                    $this->setDatasetPrimaryColumnName($primaryKey);
+                    $this->setDatasetTableName($tableName);
                 }
 
                 break;
