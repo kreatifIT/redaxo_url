@@ -396,11 +396,9 @@ class UrlManager
                     $url->withQuery('?'.\rex_string::buildQuery($urlParams, $ep->getParam('separator')));
                 }
 
-                /* kreatif: entfernt, weil wir immer die absolute url wollen
                 if ($url->getDomain() == Url::getCurrent()->getDomain()) {
                     return $url->getPath().$url->getQuery();
                 }
-                */
 
                 $scheme = Url::getRewriter()->getSchemeByDomain($url->getDomain()) ?: (Url::getRewriter()->isHttps() ? 'https' : 'http');
                 $url->withScheme($scheme);
