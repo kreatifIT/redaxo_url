@@ -71,9 +71,9 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.1
      * @return string The URI scheme or an empty string if no scheme has been provided
      */
-    public function getScheme()
+    public function getScheme(): string
     {
-        return $this->scheme;
+        return $this->scheme; 
     }
 
     /**

@@ -37,7 +37,7 @@ interface UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.1
      * @return string The URI scheme.
      */
-    public function getScheme();
+    public function getScheme(): string;
 
     /**
      * Retrieve the authority component of the URI.
