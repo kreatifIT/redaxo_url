@@ -111,7 +111,7 @@ class Uri implements UriInterface
      * @see http://tools.ietf.org/html/rfc3986#section-3.2.1
      * @return string The URI user information or an empty string if no username has been provided
      */
-    public function getUserInfo()
+    public function getUserInfo(): string
     {
         return $this->userInfo;
     }
@@ -126,7 +126,7 @@ class Uri implements UriInterface
      * @see http://tools.ietf.org/html/rfc3986#section-3.2.2
      * @return string The URI host or an empty string if no host has been provided
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->host;
     }
@@ -141,7 +141,7 @@ class Uri implements UriInterface
      * @see http://tools.ietf.org/html/rfc3986#section-3.2.3
      * @return int|null The URI port or null if no port has been provided
      */
-    public function getPort()
+    public function getPort(): int|null
     {
         if ($this->port === $this->getStandardPort()) {
             return null;
@@ -155,7 +155,7 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.3
      * @return string The URI path or an empty string if no path has been provided
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -165,7 +165,7 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.4
      * @return string The URI query string or an empty string if no query has been provided
      */
-    public function getQuery()
+    public function getQuery(): string
     {
         return $this->query;
     }
@@ -175,7 +175,7 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.5
      * @return string The URI fragment or an empty string if no fragment has been provided
      */
-    public function getFragment()
+    public function getFragment(): string
     {
         return $this->fragment;
     }
