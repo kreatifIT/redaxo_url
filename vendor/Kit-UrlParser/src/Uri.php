@@ -139,9 +139,9 @@ class Uri implements UriInterface
      * the standard port for the current scheme.
      *
      * @see http://tools.ietf.org/html/rfc3986#section-3.2.3
-     * @return int|null The URI port or null if no port has been provided
+     * @return int The URI port or null if no port has been provided
      */
-    public function getPort(): int|null
+    public function getPort(): ?int
     {
         if ($this->port === $this->getStandardPort()) {
             return null;
@@ -193,7 +193,7 @@ class Uri implements UriInterface
      * @return static A new instance with the specified scheme
      * @throws \InvalidArgumentException If the scheme is invalid
      */
-    public function withScheme($scheme)
+    public function withScheme($scheme): Uri
     {
         $scheme = strtolower($scheme);
         $pattern = new UriPattern();
@@ -218,7 +218,7 @@ class Uri implements UriInterface
      * @param string|null $password The password associated with the user
      * @return static A new instance with the specified user information
      */
-    public function withUserInfo($user, $password = null)
+    public function withUserInfo($user, $password = null): Uri
     {
         $username = rawurlencode($user);
 
@@ -244,7 +244,7 @@ class Uri implements UriInterface
      * @return static A new instance with the specified host
      * @throws \InvalidArgumentException If the hostname is invalid
      */
-    public function withHost($host)
+    public function withHost($host): Uri
     {
         $pattern = new UriPattern();
 
@@ -266,7 +266,7 @@ class Uri implements UriInterface
      * @return static A new instance with the specified port
      * @throws \InvalidArgumentException If the port is invalid
      */
-    public function withPort($port)
+    public function withPort($port): Uri
     {
         if ($port !== null) {
             $port = (int) $port;
@@ -291,7 +291,7 @@ class Uri implements UriInterface
      * @param string $path The path to use with the new instance
      * @return static A new instance with the specified path
      */
-    public function withPath($path)
+    public function withPath($path): Uri
     {
         return $this->with('path', $this->encode($path, '@/'));
     }
@@ -306,7 +306,7 @@ class Uri implements UriInterface
      * @param string $query The query string to use with the new instance
      * @return static A new instance with the specified query string
      */
-    public function withQuery($query)
+    public function withQuery($query): Uri
     {
         return $this->with('query', $this->encode($query, ':@/?'));
     }
@@ -321,7 +321,7 @@ class Uri implements UriInterface
      * @param string $fragment The fragment to use with the new instance
      * @return static A new instance with the specified fragment
      */
-    public function withFragment($fragment)
+    public function withFragment($fragment): Uri
     {
         return $this->with('fragment', $this->encode($fragment, ':@/?'));
     }
@@ -388,7 +388,7 @@ class Uri implements UriInterface
      *
      * @return string The string representation of the URI
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->constructString([
             '%s%s:'  => $this->getScheme(),

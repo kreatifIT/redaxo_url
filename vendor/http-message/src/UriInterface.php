@@ -104,8 +104,8 @@ interface UriInterface
      * If no port is present, but a scheme is present, this method MAY return
      * the standard port for that scheme, but SHOULD return null.
      *
-     * @return null|int The URI port.
-     */
+     * @return int The URI port.
+     */ 
     public function getPort():  ?int;
 
     /**
