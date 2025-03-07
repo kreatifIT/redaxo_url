@@ -91,7 +91,7 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.2
      * @return string The URI authority or an empty string if no authority information has been provided
      */
-    public function getAuthority()
+    public function getAuthority(): string
     {
         return $this->constructString([
             '%s%s@' => $this->getUserInfo(),

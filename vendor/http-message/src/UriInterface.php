@@ -57,7 +57,7 @@ interface UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.2
      * @return string The URI authority, in "[user-info@]host[:port]" format.
      */
-    public function getAuthority();
+    public function getAuthority(): string;
 
     /**
      * Retrieve the user information component of the URI.
