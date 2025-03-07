@@ -106,7 +106,7 @@ interface UriInterface
      *
      * @return null|int The URI port.
      */
-    public function getPort(): int|null;
+    public function getPort():  ?int;
 
     /**
      * Retrieve the path component of the URI.
